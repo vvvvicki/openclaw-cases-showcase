@@ -4,8 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OpenClaw 玩法猎手</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #faf9f7;
@@ -65,7 +63,6 @@
     .hero-stat { text-align: center; }
     .hero-stat .n { font-size: 2rem; font-weight: 300; color: var(--text); letter-spacing: -0.03em; }
     .hero-stat .l { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-top: 0.3rem; }
-
     .divider {
       max-width: 860px;
       margin: 0 auto;
@@ -73,11 +70,9 @@
       display: flex;
       align-items: center;
       gap: 1rem;
-      color: var(--border);
     }
     .divider span { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: #ccc; white-space: nowrap; }
     .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
-
     .filter-section {
       max-width: 860px;
       margin: 2rem auto;
@@ -108,7 +103,6 @@
     }
     .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
     .filter-btn.active { background: var(--text); border-color: var(--text); color: #fff; }
-
     .cards-section {
       max-width: 860px;
       margin: 0 auto;
@@ -156,10 +150,7 @@
       text-transform: uppercase;
       color: var(--accent);
     }
-    .card-score {
-      font-size: 0.75rem;
-      color: var(--muted);
-    }
+    .card-score { font-size: 0.75rem; color: var(--muted); }
     .card-score strong { color: var(--text); font-weight: 600; }
     .card-body { padding: 0.8rem 1rem; }
     .card-title {
@@ -194,7 +185,6 @@
     }
     .card-link-hint { color: var(--accent); opacity: 0; transition: opacity 0.2s; }
     .card:hover .card-link-hint { opacity: 1; }
-
     .empty {
       grid-column: 1/-1;
       text-align: center;
@@ -202,7 +192,6 @@
       color: var(--muted);
       font-size: 0.85rem;
     }
-
     footer {
       border-top: 1px solid var(--border);
       padding: 2rem;
@@ -211,7 +200,6 @@
       color: #bbb;
     }
     footer a { color: var(--accent); text-decoration: none; }
-
     @media (max-width: 768px) {
       .grid { grid-template-columns: repeat(2, 1fr); gap: 0.8rem; }
       .hero h1 { font-size: 1.8rem; }
@@ -257,20 +245,8 @@
   </footer>
 
   <script>
-    const DATA_URL = '/api/cases.json';
-    let allItems = [];
-
-    async function loadCases() {
-      try {
-        const res = await fetch(DATA_URL);
-        allItems = await res.json();
-        renderStats();
-        renderFilters();
-        renderGrid(allItems);
-      } catch (e) {
-        document.getElementById('grid').innerHTML = '<div class="empty">数据加载失败，请刷新重试</div>';
-      }
-    }
+    // 数据直接内嵌，无网络请求
+    const allItems = [{"id":"rec001","title":"用 OpenClaw 替代整个工作助手（Elvis）","platform":"Reddit","score":9,"difficulty":"中等","description":"用户在 VPS Linux 上运行 OpenClaw agent「Elvis」，通过 Microsoft Teams 对话，接入 JIRA、Asana、邮件。展示了用自然语言操控企业工具链的可能性。","url":"https://reddit.com/r/openclaw/comments/1rx6q03/omg_im_absolutely_terrified_and_blown_away_at_the/","status":""},{"id":"rec002","title":"3周 Claw 实战：Mac Mini + Telegram 个人助手搭建","platform":"Reddit","score":8,"difficulty":"容易","description":"Mac Mini 本地运行、Telegram 作为对话入口、记忆配置、文件管理、自动化脚本的完整设置。","url":"https://reddit.com/r/openclaw/comments/1rx31x2/3_weeks_of_claw_my_basic_assistant_set_up/","status":""},{"id":"rec003","title":"你的 OpenClaw 没有失忆，是你没配置好 Memory","platform":"Reddit","score":7,"difficulty":"容易","description":"澄清了 OpenClaw memory 工作原理，给出了10分钟解决的配置方案。","url":"https://reddit.com/r/openclaw/comments/1rxv8i1/your_opencclaw_agent_isnt_forgetting_things_sorry/","status":""},{"id":"rec004","title":"让多个 OpenClaw agent 自己开团队会议","platform":"Reddit","score":8,"difficulty":"中等","description":"多个 OpenClaw agent 构建协作小组，每个 agent 有不同角色，可以互相「开会」协调任务。","url":"https://reddit.com/r/GenAI4all/comments/1rwyw8s/ai_agents_in_openclaw_are_running_their_own_team/","status":""},{"id":"rec005","title":"OpenClaw新手入门完整教程（54分钟）","platform":"YouTube","score":7,"difficulty":"容易","description":"YouTube 教程视频，35.7万观看，54分钟完整覆盖 OpenClaw 安装配置全过程。","url":"https://www.youtube.com/watch?v=n1sfrc-RjyM","status":""},{"id":"rec006","title":"Reddit「Holy Shit」案例帖","platform":"Reddit","score":10,"difficulty":"中等","description":"Walmart API + 数字食谱自动生成购物车、OpenClaw 读取日历发现面试自动创建准备文档、Garmin Connect 数据+Telegram 健康追踪。","url":"https://reddit.com/r/openclaw/comments/1rv44py/whats_the_one_use_case_of_opencclaw_that_made_you/","status":""},{"id":"rec007","title":"OpenClaw多模型编排","platform":"Reddit","score":8,"difficulty":"中等","description":"最佳定位是「自动化中间层」而非单模型调用器，核心洞察：编排>模型本身。","url":"https://reddit.com/r/costlyinfra/comments/1rvij3l/openclaw_use_cases/","status":""},{"id":"rec008","title":"OpenClaw自动谈判车价节省$4,200","platform":"X/Twitter","score":10,"difficulty":"中等","description":"通过语音让 OpenClaw 自动与多家汽车经销商谈判，最终节省$4,200购车款。","url":"https://x.com/astuyve/status/2014147784098681217","status":""},{"id":"rec009","title":"awesome-openclaw-usecases：GitHub 26K Stars","platform":"GitHub","score":9,"difficulty":"容易","description":"收录100+真实 OpenClaw 使用案例，是目前最全面的 OpenClaw 用例参考库。","url":"https://github.com/hesamsheikh/awesome-openclaw-usecases","status":""},{"id":"rec010","title":"语音+散步完成整个开发流程","platform":"X/Twitter","score":9,"difficulty":"容易","description":"散步时给 OpenClaw 发语音消息，全程手机操作无需打开电脑。","url":"https://x.com/LLMJunky/status/2013089630317355014","status":""},{"id":"rec011","title":"OpenClaw作为家庭PM","platform":"X/Twitter","score":8,"difficulty":"容易","description":"随时在 Telegram 里丢话题给 OpenClaw，周日9am agent 自动汇总研究结果并发 roundup 简报。","url":"https://x.com/tonylongname/status/2008970037013381165","status":""},{"id":"rec012","title":"OpenClaw Newsroom Pipeline","platform":"Reddit","score":9,"difficulty":"中等","description":"cron 每2小时触发，从25个 RSS feed、13个 Reddit 版块抓取内容，评分过滤+AI编辑策展生成每日简报。","url":"https://reddit.com/r/OpenClawUseCases/comments/1rjwqgq/","status":""},{"id":"rec013","title":"OpenClaw+TikTok自动化营销：$670 MRR","platform":"Reddit","score":9,"difficulty":"中等","description":"每天自动选择高表现 hook 并生成6图幻灯片，agent 自己更新 skill 文件并基于数据优化策略。","url":"https://reddit.com/r/OpenClawUseCases/comments/1rhqvyk/openclaw_agent_automated_tiktok_marketing_670mo/","status":""},{"id":"rec014","title":"13个AI agent组成的营销团队","platform":"Reddit","score":8,"difficulty":"中等","description":"每15分钟运行一次，agent 间互相 review 内容（draft→critique→revision）。","url":"https://reddit.com/r/automation/comments/1rg32dg/how_i_automated_my_marketing_with_a_team_of_13_ai/","status":""},{"id":"rec015","title":"OpenClaw + 3D打印全流程","platform":"Reddit","score":9,"difficulty":"中等","description":"用 OpenClaw agent 控制3D打印机，自然语言→设计→切片→打印全链路闭环。","url":"https://reddit.com/r/OpenAI/comments/1rs2c40/finally_something_useful_with_openclaw/","status":""},{"id":"rec016","title":"100个可运行的OpenClaw工作流","platform":"Reddit","score":8,"difficulty":"容易","description":"每个包含：真实工作流、设置步骤+prompt+脚本、示例输出、KPI、失败模式。","url":"https://reddit.com/r/AskClaw/comments/1rwy5k4/i_built_100_runnable_openclaw_workflows/","status":""},{"id":"rec017","title":"OpenClaw + Shopify SEO自动化","platform":"Reddit","score":8,"difficulty":"中等","description":"关键词研究→SERP分析→写文章→E-EAT验证→配图，全链路一键完成。","url":"https://reddit.com/r/ShopifySEO/comments/1rx3rg6/i_automated_my_shopify_seo_content_workflow_with/","status":""},{"id":"rec018","title":"ClawBridge成本控制中心","platform":"V2EX","score":8,"difficulty":"容易","description":"OpenClaw 移动端控制台，实现80-90%成本节省。","url":"https://www.v2ex.com/t/1199604","status":""},{"id":"rec019","title":"4台设备4个agent并联实验","platform":"Reddit","score":7,"difficulty":"容易","description":"验证了多设备多 agent 并联的可行性。","url":"https://reddit.com/r/openclaw/comments/1ry16qv/4_mac_minis_vs_one_lonely_laptop_same_result_4/","status":""},{"id":"rec020","title":"AI+MCP + OpenClaw王炸组合","platform":"小红书","score":8,"difficulty":"中等","description":"MCP（Model Context Protocol）与 OpenClaw 结合，实现自动化工作流。","url":"https://www.xiaohongshu.com/explore/69b8125d00000000002801fd84","status":""},{"id":"rec021","title":"ClawdBot Full Tutorial（YouTube 45.6万观看）","platform":"YouTube","score":7,"difficulty":"容易","description":"详细讲解 ClawdBot/OpenClaw 的完整设置和使用方法。","url":"https://www.youtube.com/watch?v=a63dUwXUgDo","status":""},{"id":"rec022","title":"The Ultimate Beginner Guide to OpenClaw（45.4万观看）","platform":"YouTube","score":7,"difficulty":"容易","description":"系统讲解 OpenClaw 核心概念和上手路径。","url":"https://www.youtube.com/watch?v=st534T7-mdE","status":""},{"id":"rec023","title":"Master OpenClaw in 35 minutes（11.2万观看）","platform":"YouTube","score":7,"difficulty":"容易","description":"35分钟快速掌握 OpenClaw 核心用法。","url":"https://www.youtube.com/watch?v=4evf5YqVzOM","status":""},{"id":"rec024","title":"OpenClaw 3大超实用玩法：炒股、搞情报","platform":"小红书","score":8,"difficulty":"中等","description":"OpenClaw 在金融和情报领域的应用潜力。","url":"https://www.xiaohongshu.com/explore/69a96fad000000002203166b","status":""},{"id":"rec025","title":"OpenClaw使用案例｜三只龙虾帮我打工","platform":"小红书","score":8,"difficulty":"中等","description":"每个 agent 负责不同任务，展示多 agent 协作的用法。","url":"https://www.xiaohongshu.com/explore/69ae906a000000001b0142e4","status":""},{"id":"rec026","title":"OpenClaw！我养了一只会做咨询级PPT的龙虾","platform":"小红书","score":8,"difficulty":"中等","description":"用 OpenClaw 自动生成专业级 PPT 的能力。","url":"https://www.xiaohongshu.com/explore/69aa7a890000000015022318","status":""},{"id":"rec027","title":"我用openclaw做了一个自动剪辑的工具","platform":"小红书","score":8,"difficulty":"中等","description":"用 OpenClaw 实现视频自动剪辑的工作流。","url":"https://www.xiaohongshu.com/explore/69a95a1600000000220322f6","status":""},{"id":"rec028","title":"最强外挂！我用 OpenClaw 搭了一支 AI 团队","platform":"小红书","score":8,"difficulty":"中等","description":"每个 agent 分工协作，组成 AI 团队完成复杂任务。","url":"https://www.xiaohongshu.com/explore/69b01a9a000000001b01da95","status":""},{"id":"rec029","title":"OpenClaw养龙虾，到底是啥？","platform":"小红书","score":6,"difficulty":"容易","description":"介绍 OpenClaw 的基本概念和定位，是入门科普类内容。","url":"https://www.xiaohongshu.com/explore/69b3ccc3000000001a02d785","status":""},{"id":"rec030","title":"OpenClaw超简单部署攻略","platform":"小红书","score":7,"difficulty":"容易","description":"保姆级 OpenClaw 部署教程，面向新手。","url":"https://www.xiaohongshu.com/explore/69a990f5000000002202f946","status":""},{"id":"rec031","title":"openclaw多agent最佳实践","platform":"小红书","score":7,"difficulty":"中等","description":"多 agent 协作的配置方法和应用场景。","url":"https://www.xiaohongshu.com/explore/69b39c82000000002103bf17","status":""},{"id":"rec032","title":"EverOS - a memory OS for OpenClaw agents","platform":"GitHub","score":8,"difficulty":"中等","description":"让 OpenClaw agents 更有记忆力的 Memory OS。","url":"https://github.com/EverMind-AI/EverOS","status":""},{"id":"rec033","title":"From Zero to First AI Assistant in 15 Minutes","platform":"YouTube","score":10,"difficulty":"中等","description":"15分钟极短上手教程，降低入门门槛。","url":"https://www.youtube.com/watch?v=WSata1-1IJQ&vl=en","status":""},{"id":"rec034","title":"Tested 6 agentic AI tools for productivity","platform":"Reddit","score":10,"difficulty":"中等","description":"6款工具横评，OpenClaw 综合第一。","url":"https://www.reddit.com/r/ProductivityApps/comments/1mtg4nv/tested_6_agentic_ai_tools_for_productivity_heres/","status":""},{"id":"rec035","title":"AI Agents in a productivity app","platform":"Reddit","score":10,"difficulty":"中等","description":"将 OpenClaw 集成到生产力应用的 AI 中间层最佳技术验证。","url":"https://www.reddit.com/r/SideProject/comments/1rzhekk/ai_agents_in_a_productivity_app/","status":""},{"id":"rec036","title":"I woke up to 47 browser tabs open","platform":"Reddit","score":10,"difficulty":"中等","description":"Agent 自主打开47个标签页，决定构建 AI 劳动力市场。","url":"https://www.reddit.com/r/openclaw/comments/1qxrx1g/i_woke_up_to_47_browser_tabs_open_my_openclaw/","status":""},{"id":"rec037","title":"Has anyone actually made money?","platform":"Reddit","score":10,"difficulty":"中等","description":"启动成本$20-100/月，变现路径$500-5000+/月，商业化 ROI 完整数据。","url":"https://www.reddit.com/r/openclaw/comments/1rltr18/has_anyone_actually_made_money_running_an_ai/","status":""},{"id":"rec038","title":"全球AI产业十层冰山图 - GPT5.2Pro研究","platform":"小红书","score":10,"difficulty":"容易","description":"全球AI产业十层冰山图解析。","url":"https://www.xiaohongshu.com/discovery/item/6968c9260000000021031f35","status":""},{"id":"rec039","title":"Claude Code workflow速查图","platform":"小红书","score":9,"difficulty":"容易","description":"Claude Code workflow 速查图。","url":"https://www.xiaohongshu.com/discovery/item/69b92b5b0000000023015b67","status":""},{"id":"rec040","title":"OpenClaw 24/7 Business Automation Machine","platform":"Exa","score":6,"difficulty":"中等","description":"用 OpenClaw 构建 24/7 商业自动化引擎。","url":"https://regolo.ai/openclaw-ai-agent-build-a-24-7-business-automation-machine/","status":""},{"id":"rec041","title":"自学习AI Operator：同时运营5个业务","platform":"Web","score":9,"difficulty":"难","description":"同时运营5个不同业务的 AI operator，多业务上下文隔离、共享知识库、优先级调度。","url":"https://launchmyopenclaw.com/builds/jarvis-multi-venture-operator","status":""},{"id":"rec042","title":"OpenClaw+Shopify：DTC电商运营成本降低40%","platform":"Web","score":8,"difficulty":"中等","description":"用 AI agent 自动化 DTC 电商运营，实现运营成本降低40%。","url":"https://stormy.ai/blog/openclaw-shopify-case-studies-reducing-dtc-operational-costs","status":""},{"id":"rec043","title":"律所工作流自动化：CEO亲证每天仅介入1-2次","platform":"其他","score":10,"difficulty":"中等","description":"律所 CEO 亲证：配置好后每天仅需介入1-2次，展示了 OpenClaw 在专业服务业的真实 ROI。","url":"https://docs.bswen.com/blog/2026-03-22-law-firm-ai-automation-openclaw/","status":""},{"id":"rec044","title":"OpenClaw创始人预言2026为通用AI Agent元年","platform":"Web","score":8,"difficulty":"容易","description":"OpenClaw 创始人预测2026年可能成为通用 AI agent 的元年。","url":"https://techxplore.com/news/2026-03-openclaw-creator-year-general-ai.html","status":""},{"id":"rec045","title":"KDnuggets解析OpenClaw：免费AI Agent工具2026年爆火","platform":"Web","score":7,"difficulty":"容易","description":"数据科学头部媒体介绍 OpenClaw 在2026年爆火的原因。","url":"https://www.kdnuggets.com/openclaw-explained-the-free-ai-agent-tool-going-viral-already-in-2026","status":""},{"id":"rec046","title":"OpenClaw实战两周完整记录","platform":"Web","score":9,"difficulty":"容易","description":"两周密集实验的完整记录，含开发、SEO、外联、个人任务等场景的真实得失。","url":"https://insideaiagents.com/use-cases/two-weeks-one-openclaw-dozens-of-use-cases","status":""},{"id":"rec047","title":"72小时建站70+页：getopenclaw.ai案例","platform":"Web","score":10,"difficulty":"中等","description":"一个人通过 Telegram 与 OpenClaw 对话，72小时内完成了包含70+页面、完整SEO的网站。","url":"https://www.getopenclaw.ai/case-study","status":""},{"id":"rec048","title":"The Complete OpenClaw Guide: Production in 2026","platform":"Web","score":10,"difficulty":"中等","description":"134个 MCP 工具+多 agent 工作流+浏览器自动化，是目前最全面的生产环境实操指南。","url":"https://www.contextstudios.ai/blog/the-complete-openclaw-guide-how-we-run-an-ai-agent-in-production-2026","status":""},{"id":"rec049","title":"腾讯推出OpenClaw微信入口：QClaw全解析","platform":"微信公众号","score":9,"difficulty":"中等","description":"腾讯把24万 Star 的 OpenClaw 塞进了微信，14亿人的 AI 入口。","url":"https://mp.weixin.qq.com/s/xxx","status":""},{"id":"rec050","title":"大厂AI Agent终极战：微信vs阿里悟空","platform":"微信公众号","score":7,"difficulty":"中等","description":"微信龙虾vs阿里悟空，谁是真正的打工皇帝？","url":"https://news.qq.com/rain/a/20260324A060BZ00","status":""}];
 
     function renderStats() {
       const total = allItems.length;
@@ -331,7 +307,9 @@
       `).join('');
     }
 
-    loadCases();
+    renderStats();
+    renderFilters();
+    renderGrid(allItems);
   </script>
 </body>
 </html>
