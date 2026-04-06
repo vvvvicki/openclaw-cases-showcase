@@ -19,7 +19,7 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body {
-      font-family: 'Inter', -apple-system, sans-serif;
+      font-family: 'Inter', -apple-system, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
       background: var(--bg);
       color: var(--text);
       line-height: 1.6;
@@ -43,7 +43,7 @@
       margin-bottom: 1.5rem;
     }
     .hero h1 {
-      font-family: 'Noto Serif SC', serif;
+      font-family: 'Noto Serif SC', 'Songti SC', 'SimSun', serif;
       font-size: 2.8rem;
       font-weight: 600;
       color: var(--text);
@@ -163,7 +163,7 @@
     .card-score strong { color: var(--text); font-weight: 600; }
     .card-body { padding: 0.8rem 1rem; }
     .card-title {
-      font-family: 'Noto Serif SC', serif;
+      font-family: 'Noto Serif SC', 'Songti SC', 'SimSun', serif;
       font-size: 0.9rem;
       font-weight: 400;
       color: var(--text);
@@ -213,13 +213,17 @@
     footer a { color: var(--accent); text-decoration: none; }
 
     @media (max-width: 768px) {
-      .grid { grid-template-columns: 1fr 1fr; }
-      .hero h1 { font-size: 2rem; }
+      .grid { grid-template-columns: repeat(2, 1fr); gap: 0.8rem; }
+      .hero h1 { font-size: 1.8rem; }
       .hero-stats { gap: 2rem; }
+      .hero { padding: 3rem 1.5rem 2rem; }
+      .cards-section { padding: 1.5rem 1rem 3rem; }
     }
-    @media (max-width: 500px) {
-      .grid { grid-template-columns: 1fr; }
-      .hero-stats { gap: 1.5rem; flex-wrap: wrap; }
+    @media (max-width: 480px) {
+      .grid { grid-template-columns: repeat(2, 1fr); gap: 0.6rem; }
+      .hero-stats { gap: 1.5rem; }
+      .hero { padding: 2rem 1rem 1.5rem; }
+      .hero h1 { font-size: 1.6rem; }
     }
   </style>
 </head>
