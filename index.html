@@ -4,114 +4,180 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OpenClaw 玩法猎手</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #0d0d0d;
-      color: #f0ede8;
-      min-height: 100vh;
+    :root {
+      --bg: #faf9f7;
+      --text: #1a1a1a;
+      --accent: #c9a96e;
+      --accent-light: #f0e8d8;
+      --muted: #888;
+      --border: #e8e4de;
+      --card-bg: #ffffff;
     }
-    header {
-      padding: 3rem 2rem 2rem;
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    .hero {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 5rem 2rem 3rem;
       text-align: center;
     }
-    header h1 {
-      font-size: 2rem;
-      font-weight: 300;
-      letter-spacing: 0.08em;
-      color: #d4a96a;
-      margin-bottom: 0.5rem;
+    .hero-tag {
+      display: inline-block;
+      font-size: 0.7rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: 0.3rem 1rem;
+      border-radius: 20px;
+      margin-bottom: 1.5rem;
     }
-    header p {
-      font-size: 0.8rem;
-      color: #666;
-      letter-spacing: 0.1em;
+    .hero h1 {
+      font-family: 'Noto Serif SC', serif;
+      font-size: 2.8rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
     }
-    .stats {
+    .hero p {
+      font-size: 1rem;
+      color: var(--muted);
+      max-width: 500px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.8;
+    }
+    .hero-stats {
       display: flex;
       justify-content: center;
       gap: 3rem;
-      padding: 1.5rem 2rem;
-      border-bottom: 1px solid #1a1a1a;
-      margin-bottom: 2rem;
     }
-    .stat { text-align: center; }
-    .stat-num { font-size: 1.8rem; color: #d4a96a; font-weight: 300; }
-    .stat-label { font-size: 0.7rem; color: #555; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 0.3rem; }
+    .hero-stat { text-align: center; }
+    .hero-stat .n { font-size: 2rem; font-weight: 300; color: var(--text); letter-spacing: -0.03em; }
+    .hero-stat .l { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-top: 0.3rem; }
+
+    .divider {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      color: var(--border);
+    }
+    .divider span { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: #ccc; white-space: nowrap; }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    .filter-section {
+      max-width: 860px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
+    .filter-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 0.8rem;
+    }
     .filters {
       display: flex;
-      justify-content: center;
       flex-wrap: wrap;
       gap: 0.5rem;
-      padding: 0 2rem 2rem;
     }
     .filter-btn {
       background: transparent;
-      border: 1px solid #2a2a2a;
-      color: #666;
-      padding: 0.35rem 1rem;
-      border-radius: 20px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 0.4rem 1rem;
+      border-radius: 4px;
       cursor: pointer;
-      font-size: 0.75rem;
-      transition: all 0.2s;
+      font-size: 0.78rem;
+      transition: all 0.15s;
+      font-family: inherit;
     }
-    .filter-btn:hover, .filter-btn.active {
-      border-color: #d4a96a;
-      color: #d4a96a;
-    }
-    .filter-btn.active { background: #d4a96a12; }
-    .grid {
-      columns: 3;
-      column-gap: 1rem;
-      padding: 0 2rem 3rem;
-      max-width: 1200px;
+    .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .filter-btn.active { background: var(--text); border-color: var(--text); color: #fff; }
+
+    .cards-section {
+      max-width: 860px;
       margin: 0 auto;
+      padding: 2rem 2rem 5rem;
     }
-    .card {
-      break-inside: avoid;
-      margin-bottom: 1rem;
-      border-radius: 8px;
-      overflow: hidden;
-      background: #141414;
-      border: 1px solid #1e1e1e;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .card:hover { border-color: #333; transform: translateY(-2px); }
-    .card-top {
+    .cards-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0.8rem 1rem;
-      border-bottom: 1px solid #1a1a1a;
+      margin-bottom: 1.5rem;
+    }
+    .cards-header span { font-size: 0.75rem; color: var(--muted); }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.2rem;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      transition: all 0.2s;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+    .card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 4px 24px rgba(201,169,110,0.1);
+      transform: translateY(-3px);
+    }
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 1rem 1rem 0.8rem;
+      border-bottom: 1px solid var(--bg);
     }
     .card-platform {
       font-size: 0.65rem;
-      color: #d4a96a;
-      background: #d4a96a15;
-      padding: 0.2rem 0.6rem;
-      border-radius: 10px;
-      text-transform: uppercase;
+      font-weight: 500;
       letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--accent);
     }
     .card-score {
       font-size: 0.75rem;
-      color: #888;
+      color: var(--muted);
     }
-    .card-score span { color: #d4a96a; font-weight: 600; }
-    .card-body { padding: 1rem; }
+    .card-score strong { color: var(--text); font-weight: 600; }
+    .card-body { padding: 0.8rem 1rem; }
     .card-title {
-      font-size: 0.85rem;
-      color: #e0dcd6;
+      font-family: 'Noto Serif SC', serif;
+      font-size: 0.9rem;
+      font-weight: 400;
+      color: var(--text);
       line-height: 1.5;
       margin-bottom: 0.6rem;
-      font-weight: 500;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
     .card-desc {
       font-size: 0.75rem;
       color: #666;
-      line-height: 1.6;
+      line-height: 1.7;
       display: -webkit-box;
       -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
@@ -121,56 +187,69 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0.7rem 1rem;
-      border-top: 1px solid #1a1a1a;
-    }
-    .card-diff {
-      font-size: 0.65rem;
-      color: #444;
-    }
-    .card-link {
-      font-size: 0.65rem;
-      color: #d4a96a;
-      text-decoration: none;
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
-    .card:hover .card-link { opacity: 1; }
-    .empty {
-      text-align: center;
-      color: #444;
-      padding: 4rem 2rem;
-      column-span: all;
-    }
-    footer {
-      text-align: center;
-      padding: 2rem;
-      color: #333;
+      padding: 0.6rem 1rem;
+      border-top: 1px solid var(--bg);
       font-size: 0.7rem;
-      border-top: 1px solid #1a1a1a;
+      color: #aaa;
     }
-    footer a { color: #555; text-decoration: none; }
-    @media (max-width: 900px) { .grid { columns: 2; } }
-    @media (max-width: 500px) { .grid { columns: 1; } .stats { gap: 1.5rem; } header h1 { font-size: 1.4rem; } }
+    .card-link-hint { color: var(--accent); opacity: 0; transition: opacity 0.2s; }
+    .card:hover .card-link-hint { opacity: 1; }
+
+    .empty {
+      grid-column: 1/-1;
+      text-align: center;
+      padding: 4rem;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem;
+      text-align: center;
+      font-size: 0.72rem;
+      color: #bbb;
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+
+    @media (max-width: 768px) {
+      .grid { grid-template-columns: 1fr 1fr; }
+      .hero h1 { font-size: 2rem; }
+      .hero-stats { gap: 2rem; }
+    }
+    @media (max-width: 500px) {
+      .grid { grid-template-columns: 1fr; }
+      .hero-stats { gap: 1.5rem; flex-wrap: wrap; }
+    }
   </style>
 </head>
 <body>
-  <header>
-    <h1>OpenClaw 玩法猎手</h1>
-    <p>案例库 / OpenClaw / AI Agent / 自动化工作流</p>
-  </header>
+  <section class="hero">
+    <div class="hero-tag">OpenClaw 案例库</div>
+    <h1>玩法猎手</h1>
+    <p>收录全网 OpenClaw / AI Agent 真实玩法案例，按评分排序，持续更新</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="n" id="total-count">--</div><div class="l">收录案例</div></div>
+      <div class="hero-stat"><div class="n" id="avg-score">--</div><div class="l">平均评分</div></div>
+      <div class="hero-stat"><div class="n" id="platform-count">--</div><div class="l">来源平台</div></div>
+    </div>
+  </section>
 
-  <div class="stats">
-    <div class="stat"><div class="stat-num" id="total-count">--</div><div class="stat-label">收录案例</div></div>
-    <div class="stat"><div class="stat-num" id="avg-score">--</div><div class="stat-label">平均评分</div></div>
-    <div class="stat"><div class="stat-num" id="platform-count">--</div><div class="stat-label">来源平台</div></div>
+  <div class="divider"><span>按平台筛选</span></div>
+
+  <div class="filter-section">
+    <div class="filters" id="filters"></div>
   </div>
 
-  <div class="filters" id="filters"></div>
-  <div class="grid" id="grid"></div>
+  <div class="cards-section">
+    <div class="cards-header">
+      <span id="showing-count">全部</span>
+    </div>
+    <div class="grid" id="grid"></div>
+  </div>
 
   <footer>
-    <p>Powered by <a href="https://github.com/openclaw" target="_blank">OpenClaw</a> · 数据来源：飞书多维表格</p>
+    Powered by <a href="https://github.com/openclaw" target="_blank">OpenClaw</a> · 数据来源：飞书多维表格
   </footer>
 
   <script>
@@ -180,13 +259,12 @@
     async function loadCases() {
       try {
         const res = await fetch(DATA_URL);
-        if (!res.ok) throw new Error();
         allItems = await res.json();
         renderStats();
         renderFilters();
         renderGrid(allItems);
       } catch (e) {
-        document.getElementById('grid').innerHTML = '<div class="empty"><p>数据加载失败</p></div>';
+        document.getElementById('grid').innerHTML = '<div class="empty">数据加载失败，请刷新重试</div>';
       }
     }
 
@@ -220,32 +298,32 @@
       document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
       evt.target.classList.add('active');
       const items = platform === '全部' ? allItems : allItems.filter(i => i.platform === platform);
+      document.getElementById('showing-count').textContent = platform === '全部' ? '全部' : platform;
       renderGrid(items);
     }
 
     function renderGrid(items) {
       const grid = document.getElementById('grid');
       if (!items.length) {
-        grid.innerHTML = '<div class="empty"><p>暂无案例</p></div>';
+        grid.innerHTML = '<div class="empty">暂无案例</div>';
         return;
       }
-      // Sort by score desc
       items = [...items].sort((a, b) => (parseFloat(b.score) || 0) - (parseFloat(a.score) || 0));
       grid.innerHTML = items.map(item => `
-        <div class="card">
+        <a class="card" href="${item.url || '#'}" target="_blank" rel="noopener">
           <div class="card-top">
             <span class="card-platform">${item.platform || '其他'}</span>
-            <span class="card-score">评分 <span>${item.score || '—'}</span></span>
+            <span class="card-score"><strong>${item.score || '—'}</strong> / 10</span>
           </div>
           <div class="card-body">
             <div class="card-title">${item.title || '无标题'}</div>
             <div class="card-desc">${item.description || ''}</div>
           </div>
           <div class="card-footer">
-            <span class="card-diff">${item.difficulty ? '迁移难度：' + item.difficulty : ''}</span>
-            ${item.url ? `<a class="card-link" href="${item.url}" target="_blank">查看原文 →</a>` : ''}
+            <span>${item.difficulty ? '迁移 ' + item.difficulty : ''}</span>
+            <span class="card-link-hint">查看原文 →</span>
           </div>
-        </div>
+        </a>
       `).join('');
     }
 
