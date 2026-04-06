@@ -1,0 +1,112 @@
+[
+  {
+    "id": "rec001",
+    "title": "用 OpenClaw 替代整个工作助手（Elvis）",
+    "platform": "Reddit",
+    "score": 9,
+    "difficulty": "中等",
+    "description": "用户在 VPS Linux 上运行 OpenClaw agent Elvis，通过 Microsoft Teams 对话，接入 JIRA、Asana、邮件。",
+    "url": "https://reddit.com/r/openclaw/comments/1rx6q03/",
+    "urlText": "Reddit 帖子",
+    "status": "已推送"
+  },
+  {
+    "id": "rec002",
+    "title": "3周 Claw 实战：Mac Mini + Telegram 个人助手搭建",
+    "platform": "Reddit",
+    "score": 8,
+    "difficulty": "容易",
+    "description": "3周完整设置：Mac Mini 本地运行、Telegram 作为对话入口、记忆配置、文件管理。",
+    "url": "https://reddit.com/r/openclaw/comments/1rx31x2/",
+    "urlText": "Reddit 帖子",
+    "status": "已推送"
+  },
+  {
+    "id": "rec003",
+    "title": "OpenClaw自动谈判车价节省$4,200",
+    "platform": "X/Twitter",
+    "score": 10,
+    "difficulty": "中等",
+    "description": "通过语音让 OpenClaw 自动与多家汽车经销商谈判，自动操控浏览器查价、发邮件，最终节省$4,200。",
+    "url": "https://x.com/astuyve/status/2014147784098681217",
+    "urlText": "X帖子",
+    "status": "已筛选"
+  },
+  {
+    "id": "rec004",
+    "title": "awesome-openclaw-usecases：GitHub 26K Stars社区用例百科",
+    "platform": "GitHub",
+    "score": 9,
+    "difficulty": "容易",
+    "description": "社区维护的开源 awesome list，收录100+真实 OpenClaw 使用案例，含完整场景描述。",
+    "url": "https://github.com/hesamsheikh/awesome-openclaw-usecases",
+    "urlText": "GitHub仓库",
+    "status": "已筛选"
+  },
+  {
+    "id": "rec005",
+    "title": "OpenClaw Newsroom Pipeline：自动化新闻扫描+AI编辑策展",
+    "platform": "Reddit",
+    "score": 9,
+    "difficulty": "中等",
+    "description": "cron每2小时触发，从5个来源（25个RSS feed、13个Reddit版块）抓取内容，评分过滤+AI编辑策展生成每日简报。",
+    "url": "https://reddit.com/r/OpenClawUseCases/comments/1rjwqgq/",
+    "urlText": "Reddit帖子+GitHub",
+    "status": "已筛选"
+  },
+  {
+    "id": "rec006",
+    "title": "OpenClaw + 3D打印全流程",
+    "platform": "Reddit",
+    "score": 9,
+    "difficulty": "中等",
+    "description": "用 OpenClaw agent 开发了一套 skill，能够查找、创建、编辑、切片并发送到3D打印机打印模型。",
+    "url": "https://reddit.com/r/OpenAI/comments/1rs2c40/",
+    "urlText": "Reddit帖子",
+    "status": "已筛选"
+  },
+  {
+    "id": "rec007",
+    "title": "13个AI agent组成的营销团队",
+    "platform": "Reddit",
+    "score": 8,
+    "difficulty": "中等",
+    "description": "每15分钟运行一次，agent间互相review内容（draft→critique→revision），boss agent负责分配任务。",
+    "url": "https://reddit.com/r/automation/comments/1rg32dg/",
+    "urlText": "Reddit帖子",
+    "status": "已筛选"
+  },
+  {
+    "id": "rec008",
+    "title": "OpenClaw + TikTok自动化营销：$670 MRR",
+    "platform": "Reddit",
+    "score": 9,
+    "difficulty": "中等",
+    "description": "每天自动选择高表现hook并生成6图幻灯片，自动检查前日analytics，agent自己更新skill文件并基于数据优化策略。",
+    "url": "https://reddit.com/r/OpenClawUseCases/comments/1rhqvyk/",
+    "urlText": "Reddit帖子",
+    "status": "已筛选"
+  },
+  {
+    "id": "rec009",
+    "title": "OpenClaw多模型编排：最佳定位是自动化中间层",
+    "platform": "Reddit",
+    "score": 8,
+    "difficulty": "中等",
+    "description": "自动根据问题复杂度路由到不同模型（快/慢/强推理），文档处理流水线，编码助手自动切换模型。",
+    "url": "https://reddit.com/r/costlyinfra/comments/1rvij3l/",
+    "urlText": "Reddit帖子",
+    "status": "已筛选"
+  },
+  {
+    "id": "rec010",
+    "title": "让多个 OpenClaw agent 自己开团队会议",
+    "platform": "Reddit",
+    "score": 8,
+    "difficulty": "中等",
+    "description": "每个agent有不同角色，它们之间可以互相「开会」协调任务，multi-agent routing 的高级应用。",
+    "url": "https://reddit.com/r/GenAI4all/comments/1rwyw8s/",
+    "urlText": "Reddit帖子",
+    "status": "已推送"
+  }
+]

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpenClaw 玩法猎手</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #0d0d0d;
+      color: #f0ede8;
+      min-height: 100vh;
+    }
+    header {
+      padding: 3rem 2rem 2rem;
+      text-align: center;
+    }
+    header h1 {
+      font-size: 2rem;
+      font-weight: 300;
+      letter-spacing: 0.08em;
+      color: #d4a96a;
+      margin-bottom: 0.5rem;
+    }
+    header p {
+      font-size: 0.8rem;
+      color: #666;
+      letter-spacing: 0.1em;
+    }
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid #1a1a1a;
+      margin-bottom: 2rem;
+    }
+    .stat { text-align: center; }
+    .stat-num { font-size: 1.8rem; color: #d4a96a; font-weight: 300; }
+    .stat-label { font-size: 0.7rem; color: #555; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 0.3rem; }
+    .filters {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      padding: 0 2rem 2rem;
+    }
+    .filter-btn {
+      background: transparent;
+      border: 1px solid #2a2a2a;
+      color: #666;
+      padding: 0.35rem 1rem;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.75rem;
+      transition: all 0.2s;
+    }
+    .filter-btn:hover, .filter-btn.active {
+      border-color: #d4a96a;
+      color: #d4a96a;
+    }
+    .filter-btn.active { background: #d4a96a12; }
+    .grid {
+      columns: 3;
+      column-gap: 1rem;
+      padding: 0 2rem 3rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .card {
+      break-inside: avoid;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #141414;
+      border: 1px solid #1e1e1e;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .card:hover { border-color: #333; transform: translateY(-2px); }
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.8rem 1rem;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    .card-platform {
+      font-size: 0.65rem;
+      color: #d4a96a;
+      background: #d4a96a15;
+      padding: 0.2rem 0.6rem;
+      border-radius: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .card-score {
+      font-size: 0.75rem;
+      color: #888;
+    }
+    .card-score span { color: #d4a96a; font-weight: 600; }
+    .card-body { padding: 1rem; }
+    .card-title {
+      font-size: 0.85rem;
+      color: #e0dcd6;
+      line-height: 1.5;
+      margin-bottom: 0.6rem;
+      font-weight: 500;
+    }
+    .card-desc {
+      font-size: 0.75rem;
+      color: #666;
+      line-height: 1.6;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.7rem 1rem;
+      border-top: 1px solid #1a1a1a;
+    }
+    .card-diff {
+      font-size: 0.65rem;
+      color: #444;
+    }
+    .card-link {
+      font-size: 0.65rem;
+      color: #d4a96a;
+      text-decoration: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .card:hover .card-link { opacity: 1; }
+    .empty {
+      text-align: center;
+      color: #444;
+      padding: 4rem 2rem;
+      column-span: all;
+    }
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: #333;
+      font-size: 0.7rem;
+      border-top: 1px solid #1a1a1a;
+    }
+    footer a { color: #555; text-decoration: none; }
+    @media (max-width: 900px) { .grid { columns: 2; } }
+    @media (max-width: 500px) { .grid { columns: 1; } .stats { gap: 1.5rem; } header h1 { font-size: 1.4rem; } }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>OpenClaw 玩法猎手</h1>
+    <p>案例库 / OpenClaw / AI Agent / 自动化工作流</p>
+  </header>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-num" id="total-count">--</div><div class="stat-label">收录案例</div></div>
+    <div class="stat"><div class="stat-num" id="avg-score">--</div><div class="stat-label">平均评分</div></div>
+    <div class="stat"><div class="stat-num" id="platform-count">--</div><div class="stat-label">来源平台</div></div>
+  </div>
+
+  <div class="filters" id="filters"></div>
+  <div class="grid" id="grid"></div>
+
+  <footer>
+    <p>Powered by <a href="https://github.com/openclaw" target="_blank">OpenClaw</a> · 数据来源：飞书多维表格</p>
+  </footer>
+
+  <script>
+    const DATA_URL = '/api/cases.json';
+    let allItems = [];
+
+    async function loadCases() {
+      try {
+        const res = await fetch(DATA_URL);
+        if (!res.ok) throw new Error();
+        allItems = await res.json();
+        renderStats();
+        renderFilters();
+        renderGrid(allItems);
+      } catch (e) {
+        document.getElementById('grid').innerHTML = '<div class="empty"><p>数据加载失败</p></div>';
+      }
+    }
+
+    function renderStats() {
+      const total = allItems.length;
+      const avg = total ? (allItems.reduce((s, i) => s + (parseFloat(i.score) || 0), 0) / total).toFixed(1) : '—';
+      const platforms = [...new Set(allItems.map(i => i.platform).filter(Boolean))].length;
+      document.getElementById('total-count').textContent = total;
+      document.getElementById('avg-score').textContent = avg;
+      document.getElementById('platform-count').textContent = platforms;
+    }
+
+    function renderFilters() {
+      const platforms = [...new Set(allItems.map(i => i.platform).filter(Boolean))];
+      const wrap = document.getElementById('filters');
+      const allBtn = document.createElement('button');
+      allBtn.className = 'filter-btn active';
+      allBtn.textContent = '全部';
+      allBtn.onclick = () => filterBy('全部', event);
+      wrap.appendChild(allBtn);
+      platforms.forEach(p => {
+        const btn = document.createElement('button');
+        btn.className = 'filter-btn';
+        btn.textContent = p;
+        btn.onclick = () => filterBy(p, event);
+        wrap.appendChild(btn);
+      });
+    }
+
+    function filterBy(platform, evt) {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      evt.target.classList.add('active');
+      const items = platform === '全部' ? allItems : allItems.filter(i => i.platform === platform);
+      renderGrid(items);
+    }
+
+    function renderGrid(items) {
+      const grid = document.getElementById('grid');
+      if (!items.length) {
+        grid.innerHTML = '<div class="empty"><p>暂无案例</p></div>';
+        return;
+      }
+      // Sort by score desc
+      items = [...items].sort((a, b) => (parseFloat(b.score) || 0) - (parseFloat(a.score) || 0));
+      grid.innerHTML = items.map(item => `
+        <div class="card">
+          <div class="card-top">
+            <span class="card-platform">${item.platform || '其他'}</span>
+            <span class="card-score">评分 <span>${item.score || '—'}</span></span>
+          </div>
+          <div class="card-body">
+            <div class="card-title">${item.title || '无标题'}</div>
+            <div class="card-desc">${item.description || ''}</div>
+          </div>
+          <div class="card-footer">
+            <span class="card-diff">${item.difficulty ? '迁移难度：' + item.difficulty : ''}</span>
+            ${item.url ? `<a class="card-link" href="${item.url}" target="_blank">查看原文 →</a>` : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    loadCases();
+  </script>
+</body>
+</html>
