@@ -19,9 +19,11 @@ jobs:
           FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
           FEISHU_APP_TOKEN: RDaKbFv7EaWDnWsjU6fcocYvnNh
           FEISHU_TABLE_ID: tblygXXyTmKGUp6q
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           curl -sL "https://raw.githubusercontent.com/vvvvicki/openclaw-cases-showcase/main/sync_from_feishu.py" -o /tmp/sync_from_feishu.py
           python3 /tmp/sync_from_feishu.py
+          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/vvvvicki/openclaw-cases-showcase.git"
 
       - name: Commit and push
         run: |
