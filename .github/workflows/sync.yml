@@ -13,17 +13,25 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Setup SSH for git push
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H github.com >> ~/.ssh/known_hosts 2>/dev/null
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.DEPLOY_KEY_PRIVATE }}
+
       - name: Download and run sync script
         env:
           FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
           FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
           FEISHU_APP_TOKEN: RDaKbFv7EaWDnWsjU6fcocYvnNh
           FEISHU_TABLE_ID: tblygXXyTmKGUp6q
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          git remote set-url origin git@github.com:vvvvicki/openclaw-cases-showcase.git
           curl -sL "https://raw.githubusercontent.com/vvvvicki/openclaw-cases-showcase/main/sync_from_feishu.py" -o /tmp/sync_from_feishu.py
           python3 /tmp/sync_from_feishu.py
-          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/vvvvicki/openclaw-cases-showcase.git"
 
       - name: Commit and push
         run: |
