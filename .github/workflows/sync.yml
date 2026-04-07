@@ -1,21 +1,133 @@
 name: Sync from Feishu
-'on': workflow_dispatch
+
+on: workflow_dispatch
+
 jobs:
   sync:
     runs-on: ubuntu-latest
     timeout-minutes: 15
+
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      with:
-        persist-credentials: false
-    - name: Sync from Feishu Bitable
-      env:
-        FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
-        FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
-        FEISHU_APP_TOKEN: RDaKbFv7EaWDnWsjU6fcocYvnNh
-        FEISHU_TABLE_ID: tblygXXyTmKGUp6q
-      run: "python3 -c \"import json, sys, os, urllib.request\n\nFEISHU_APP_ID = os.environ.get('FEISHU_APP_ID', '')\nFEISHU_APP_SECRET = os.environ.get('FEISHU_APP_SECRET', '')\nFEISHU_APP_TOKEN = os.environ.get('FEISHU_APP_TOKEN', 'RDaKbFv7EaWDnWsjU6fcocYvnNh')\nFEISHU_TABLE_ID = os.environ.get('FEISHU_TABLE_ID', 'tblygXXyTmKGUp6q')\n\nprint(f'APP_ID={FEISHU_APP_ID[:8]}...', file=sys.stderr)\nprint(f'APP_SECRET={FEISHU_APP_SECRET[:4]}...', file=sys.stderr)\n\n# Get token\nreq = urllib.request.Request(\n    'https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal',\n    data=json.dumps({'app_id': FEISHU_APP_ID, 'app_secret': FEISHU_APP_SECRET}).encode(),\n    headers={'Content-Type': 'application/json'}\n)\nwith urllib.request.urlopen(req, timeout=30) as resp:\n    token_data = json.loads(resp.read())\ntoken = token_data.get('tenant_access_token', '')\ncode = token_data.get('code')\nif not token or code != 0:\n    print(f'TOKEN_ERROR: code={code} msg={token_data.get(\"msg\",\"\")}', file=sys.stderr)\n    sys.exit(1)\nprint(f'TOKEN_OK len={len(token)}', file=sys.stderr)\n\n# Fetch all records\nall_records = []\npage_token = ''\nwhile True:\n    url = f'https://open.feishu.cn/open-apis/bitable/v1/apps/{FEISHU_APP_TOKEN}/tables/{FEISHU_TABLE_ID}/records?page_size=500'\n    if page_token:\n        url += f'&page_token={page_token}'\n    req = urllib.request.Request(url, headers={'Authorization': f'Bearer {token}'})\n    with urllib.request.urlopen(req, timeout=30) as resp:\n        data = json.loads(resp.read())\n    items = data.get('data', {}).get('items', [])\n    all_records.extend(items)\n    if not data.get('data', {}).get('has_more'):\n        break\n    page_token = data.get('data', {}).get('page_token', '')\n    if not page_token:\n        break\n\nprint(f'Fetched {len(all_records)} records', file=sys.stderr)\n\nwith open('/tmp/all_records.json', 'w') as f:\n    json.dump(all_records, f)\n\nwith open('/tmp/all_records.json') as f:\n    records = json.load(f)\n\ndef score(r):\n    f = r.get('fields', {})\n    s = f.get('评估分')\n    if s is None: return 0\n    try: return float(s)\n    except: return 0\n\nfiltered = [r for r in records if score(r) >= 7]\nfiltered.sort(key=lambda r: (-score(r), -float(r.get('fields',{}).get('热度信号') or 0)))\n\nseen = {}\nfor r in filtered:\n    link = r.get('fields',{}).get('案例链接',{}) or {}\n    url = (link.get('link','') if isinstance(link,dict) else '') or ''\n    if url and (url not in seen or score(r) > score(seen[url])):\n        seen[url] = r\n\nfinal = list(seen.values())[:50]\nfinal.sort(key=lambda r: (-score(r), -float(r.get('fields',{}).get('热度信号') or 0)))\n\ndef esc(v):\n    return (str(v) or '').replace('\\\\','\\\\\\\\').replace('\"','\\\\\"').replace('\\n',' ').replace('\\r','')\n\nwith open('index.html','r',encoding='utf-8') as f:\n    html = f.read()\nsi = html.find('const allItems = [')\nei = html.find('];\\nfunction diffClass')\nif si==-1 or ei==-1:\n    print('ERROR: markers not found', file=sys.stderr)\n    sys.exit(1)\n\ndata = []\nfor r in final:\n    fld = r.get('fields',{})\n    link = fld.get('案例链接',{}) or {}\n    url = (link.get('link','') if isinstance(link,dict) else '') or ''\n    title = fld.get('案例名称') or '无标题'\n    plat = fld.get('来源平台') or '其他'\n    s = score(r)\n    diff = fld.get('迁移难度') or '中等'\n    desc = fld.get('核心玩法描述') or ''\n    tags = []\n    for k in ['迁移难度','来源平台']:\n        v = fld.get(k)\n        if v: tags.append(v)\n    h = fld.get('启发价值') or ''\n    for kw in ['多Agent','变现','Telegram','自动化','本地部署','入门']:\n        if kw in h: tags.append(kw)\n    tags = tags[:3]\n    data.append('{\"id\":\"'+esc(r['id'])+'\",\"title\":\"'+esc(title)+'\",\"platform\":\"'+esc(plat)+'\",\"score\":'+str(s)+',\"difficulty\":\"'+esc(diff)+'\",\"description\":\"'+esc(desc)+'\",\"url\":\"'+esc(url)+'\",\"tags\":'+json.dumps(tags,ensure_ascii=False)+'}')\n\nnew_data = 'const allItems = [\\n      ' + ',\\n      '.join(data) + '\\n    ];'\nnew_html = html[:si] + new_data + html[ei:]\nwith open('index.html','w',encoding='utf-8') as f:\n    f.write(new_html)\nprint(f'Written: {len(final)} records', file=sys.stderr)\nprint('SUCCESS')\n\""
-      shell: bash
-    - name: Commit and push
-      run: 'git config user.name ''github-actions[bot]''; git config user.email ''41898282+github-actions[bot]@users.noreply.github.com''; git add index.html; git commit -m ''chore: sync $(date -u +%Y-%m-%dT%H:%M:%SZ)''; git push origin main || echo ''No changes'''
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Sync from Feishu Bitable
+        env:
+          FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
+          FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
+          FEISHU_APP_TOKEN: RDaKbFv7EaWDnWsjU6fcocYvnNh
+          FEISHU_TABLE_ID: tblygXXyTmKGUp6q
+        run: |
+          python3 -c '
+          import json, sys, os, urllib.request
+          FEISHU_APP_ID = os.environ.get('FEISHU_APP_ID', '')
+          FEISHU_APP_SECRET = os.environ.get('FEISHU_APP_SECRET', '')
+          FEISHU_APP_TOKEN = os.environ.get('FEISHU_APP_TOKEN', 'RDaKbFv7EaWDnWsjU6fcocYvnNh')
+          FEISHU_TABLE_ID = os.environ.get('FEISHU_TABLE_ID', 'tblygXXyTmKGUp6q')
+          print('APP_ID=' + FEISHU_APP_ID[:8] + '...', file=sys.stderr)
+          print('APP_SECRET=' + FEISHU_APP_SECRET[:4] + '...', file=sys.stderr)
+          req = urllib.request.Request(
+              'https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal',
+              data=json.dumps({'app_id': FEISHU_APP_ID, 'app_secret': FEISHU_APP_SECRET}).encode(),
+              headers={'Content-Type': 'application/json'}
+          )
+          with urllib.request.urlopen(req, timeout=30) as resp:
+              token_data = json.loads(resp.read())
+          token = token_data.get('tenant_access_token', '')
+          code = token_data.get('code')
+          if not token or code != 0:
+              print('TOKEN_ERROR code=' + str(code) + ' msg=' + str(token_data.get('msg','')), file=sys.stderr)
+              sys.exit(1)
+          print('TOKEN_OK len=' + str(len(token)), file=sys.stderr)
+          all_records = []
+          page_token = ''
+          while True:
+              url = 'https://open.feishu.cn/open-apis/bitable/v1/apps/' + FEISHU_APP_TOKEN + '/tables/' + FEISHU_TABLE_ID + '/records?page_size=500'
+              if page_token:
+                  url = url + '&page_token=' + page_token
+              req = urllib.request.Request(url, headers={'Authorization': 'Bearer ' + token})
+              with urllib.request.urlopen(req, timeout=30) as resp:
+                  data = json.loads(resp.read())
+              items = data.get('data', {}).get('items', [])
+              all_records.extend(items)
+              if not data.get('data', {}).get('has_more'):
+                  break
+              pt = data.get('data', {}).get('page_token', '')
+              if not pt:
+                  break
+              page_token = pt
+          print('Fetched ' + str(len(all_records)) + ' records', file=sys.stderr)
+          with open('/tmp/all_records.json', 'w') as f:
+              json.dump(all_records, f)
+          with open('/tmp/all_records.json') as f:
+              records = json.load(f)
+          def score(r):
+              fd = r.get('fields', {})
+              s = fd.get('评估分')
+              if s is None: return 0
+              try: return float(s)
+              except: return 0
+          filtered = [r for r in records if score(r) >= 7]
+          filtered.sort(key=lambda r: (-score(r), -float(r.get('fields',{}).get('热度信号') or 0)))
+          seen = {}
+          for r in filtered:
+              link = r.get('fields',{}).get('案例链接',{}) or {}
+              u = (link.get('link','') if isinstance(link,dict) else '') or ''
+              if u and (u not in seen or score(r) > score(seen[u])):
+                  seen[u] = r
+          final = list(seen.values())[:50]
+          final.sort(key=lambda r: (-score(r), -float(r.get('fields',{}).get('热度信号') or 0)))
+          def esc(v):
+              s = str(v) or ''
+              s = s.replace('\\', '\\\\')
+              s = s.replace('"', '\\"')
+              s = s.replace(chr(10), ' ')
+              s = s.replace(chr(13), '')
+              return s
+          with open('index.html','r',encoding='utf-8') as f:
+              html = f.read()
+          si = html.find('const allItems = [')
+          ei = html.find('];\\nfunction diffClass')
+          if si==-1 or ei==-1:
+              print('ERROR: markers not found', file=sys.stderr)
+              sys.exit(1)
+          data = []
+          for r in final:
+              fld = r.get('fields',{})
+              link = fld.get('案例链接',{}) or {}
+              u = (link.get('link','') if isinstance(link,dict) else '') or ''
+              title = fld.get('案例名称') or '无标题'
+              plat = fld.get('来源平台') or '其他'
+              s = score(r)
+              diff = fld.get('迁移难度') or '中等'
+              desc = fld.get('核心玩法描述') or ''
+              tags = []
+              for k in ['迁移难度','来源平台']:
+                  v = fld.get(k)
+                  if v: tags.append(v)
+              h = fld.get('启发价值') or ''
+              for kw in ['多Agent','变现','Telegram','自动化','本地部署','入门']:
+                  if kw in h: tags.append(kw)
+              tags = tags[:3]
+              data.append('{"id":"'+esc(r['id'])+'","title":"'+esc(title)+'","platform":"'+esc(plat)+'","score":'+str(s)+',"difficulty":"'+esc(diff)+'","description":"'+esc(desc)+'","url":"'+esc(u)+'","tags":'+json.dumps(tags,ensure_ascii=False)+'}')
+          new_data = 'const allItems = [\\n      ' + ',\\n      '.join(data) + '\\n    ];'
+          new_html = html[:si] + new_data + html[ei:]
+          with open('index.html','w',encoding='utf-8') as f:
+              f.write(new_html)
+          print('Written: ' + str(len(final)) + ' records', file=sys.stderr)
+          print('SUCCESS')
+          '
+
+      - name: Commit and push
+        run: |
+          if ! git diff --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add index.html
+            git commit -m "chore: sync $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            git push origin main
+          else
+            echo "No changes"
+          fi
