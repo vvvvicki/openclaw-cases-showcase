@@ -1,0 +1,21 @@
+name: Test6
+on: workflow_dispatch
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Fetch from Feishu
+        id: feishu
+        env:
+          FEISHU_APP_ID: \${{ secrets.FEISHU_APP_ID }}
+          FEISHU_APP_SECRET: \${{ secrets.FEISHU_APP_SECRET }}
+        run: |
+          TOKEN_RESP=$(curl -s -X POST "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal" \
+            -H "Content-Type: application/json" \
+            -d "{\"app_id\":\"$FEISHU_APP_ID\",\"app_secret\":\"$FEISHU_APP_SECRET\"}")
+          echo "token_resp=$TOKEN_RESP"
