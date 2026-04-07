@@ -1,6 +1,10 @@
 name: Sync from Feishu
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+  schedule:
+    # 每天早上 8 点自动同步（UTC 0点 = 北京时间 8点）
+    - cron: "0 8 * * *"
 
 permissions:
   contents: write
