@@ -1,0 +1,17 @@
+name: Test5
+on: workflow_dispatch
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Python test
+        run: |
+          python3 << 'PYEOF'
+          import json
+          print("test")
+          PYEOF
