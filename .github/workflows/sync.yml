@@ -1,10 +1,6 @@
 name: Sync from Feishu Bitable
 
 on:
-  # 每6小时自动跑
-  schedule:
-    - cron: '0 */6 * * *'
-  # 手动触发（网页点 Run workflow 或用 gh run workflow）（GitHub Actions 页面点 Run workflow）
   workflow_dispatch:
 
 jobs:
@@ -26,7 +22,6 @@ jobs:
           FEISHU_APP_TOKEN: RDaKbFv7EaWDnWsjU6fcocYvnNh
           FEISHU_TABLE_ID: tblygXXyTmKGUp6q
         run: |
-          # Get tenant access token
           TOKEN_RESP=$(curl -s -X POST "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal" \
             -H "Content-Type: application/json" \
             -d "{\"app_id\":\"$FEISHU_APP_ID\",\"app_secret\":\"$FEISHU_APP_SECRET\"}")
@@ -34,8 +29,6 @@ jobs:
           echo "token_len=${#TOKEN}" >> $GITHUB_OUTPUT
           if [ -z "$TOKEN" ]; then echo "Failed to get token: $TOKEN_RESP"; exit 1; fi
 
-          # Fetch all records (status = "已筛选" or "已推送", score >= 7)
-          # Use cursor-based pagination
           ALL_RECORDS='[]'
           PAGE_TOKEN=""
           ITER=0
@@ -67,7 +60,6 @@ import json, sys, os
 records_raw = os.environ.get('ALL_RECORDS', '[]')
 records = json.loads(records_raw)
 
-# Filter: 已筛选 or 已推送, score >= 7
 def score(r):
     f = r.get('fields', {})
     s = f.get('评估分')
@@ -78,7 +70,6 @@ def score(r):
 filtered = [r for r in records if score(r) >= 7]
 print(f"Filtered: {len(records)} -> {len(filtered)} records (score >= 7)", file=sys.stderr)
 
-# Sort by score desc, then by heat desc
 def sort_key(r):
     f = r.get('fields', {})
     s = score(r)
@@ -88,7 +79,6 @@ def sort_key(r):
 filtered.sort(key=sort_key)
 top50 = filtered[:50]
 
-# Deduplicate by URL (keep higher score)
 seen_urls = {}
 for r in top50:
     f = r.get('fields', {})
@@ -105,7 +95,6 @@ deduped.sort(key=sort_key)
 final = deduped[:50]
 print(f"Deduped: {len(top50)} -> {len(final)}", file=sys.stderr)
 
-# Generate tags from difficulty + platform +启发价值
 def gen_tags(r):
     f = r.get('fields', {})
     tags = []
@@ -113,7 +102,7 @@ def gen_tags(r):
     if diff: tags.append(diff)
     plat = f.get('来源平台')
     if plat: tags.append(plat)
-   启发 = f.get('启发价值') or ''
+    启发 = f.get('启发价值') or ''
     if '多Agent' in 启发 or 'Agent' in 启发: tags.append('多Agent')
     if '变现' in 启发 or '赚钱' in 启发 or 'MRR' in 启发: tags.append('变现')
     if 'Telegram' in 启发: tags.append('Telegram')
@@ -122,11 +111,9 @@ def gen_tags(r):
     if '入门' in 启发 or '教程' in 启发: tags.append('入门')
     return tags[:3]
 
-# Read existing HTML for structure
 with open('index.html', 'r', encoding='utf-8') as f:
     html = f.read()
 
-# Extract data section boundaries
 start_marker = 'const allItems = ['
 end_marker = '];\nfunction diffClass'
 si = html.find(start_marker)
@@ -146,7 +133,6 @@ for r in final:
     diff = f.get('迁移难度') or '中等'
     desc = f.get('核心玩法描述') or ''
     tags = gen_tags(r)
-    # Escape for JS string
     def esc(v): return (str(v) or '').replace('\\','\\\\').replace('"','\\"').replace('\n',' ').replace('\r','')
     tags_js = json.dumps(tags, ensure_ascii=False)
     data_js.append(f'{{"id":"{esc(r["id"])}","title":"{esc(title)}","platform":"{esc(plat)}","score":{s},"difficulty":"{esc(diff)}","description":"{esc(desc)}","url":"{esc(url)}","tags":{tags_js}}}')
@@ -170,4 +156,3 @@ PYEOF
           else
             echo "No changes, skip push"
           fi
-
