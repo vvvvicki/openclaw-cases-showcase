@@ -4,7 +4,7 @@ on:
   # 每6小时自动跑
   schedule:
     - cron: '0 */6 * * *'
-  # 也可手动触发（GitHub Actions 页面点 Run workflow）
+  # 手动触发（网页点 Run workflow 或用 gh run workflow）（GitHub Actions 页面点 Run workflow）
   workflow_dispatch:
 
 jobs:
